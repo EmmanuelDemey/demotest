@@ -1,0 +1,16 @@
+version: 2
+jobs:
+  build:
+    working_directory: ~/demotest
+    docker:
+      - image: circleci/node:6-browsers
+    steps:
+      - checkout
+      - restore_cache:
+          key: demotest-{{ .Branch }}-{{ checksum "package.json" }}
+      - run: npm install
+      - save_cache:
+          key: demotest-{{ .Branch }}-{{ checksum "package.json" }}
+          paths:
+            - "node_modules"
+      - run: xvfb-run -a npm run test -- --single-run --no-progress --browser=ChromeNoSandbox
